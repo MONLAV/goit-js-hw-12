@@ -17,6 +17,7 @@
   "author": "Alina Lysyana <angelina06@ukr.net>",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.9",
     "vite-plugin-full-reload": "^1.2.0",
     "vite-plugin-html-inject": "^1.1.2"
   }
