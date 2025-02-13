@@ -99,9 +99,9 @@ ul {
   letter-spacing: 0.04em;
 }
 
-.Load-more {
+.load-more {
   display: block;
-    margin: 0 auto;
+    margin: 15px auto;
     padding: 10px 20px;
     background-color: #007bff;
     color: white;
