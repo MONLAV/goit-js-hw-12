@@ -83,7 +83,15 @@ const fetchAndRenderImages = searchText => {
 };
 
 const loadMoreImages = () => {
+  loader.style.display = 'block';
+  loadMoreBtn.style.display = 'none';
   fetchAndRenderImages(currentSearchText);
+
+ const cardHeight = document.querySelector('.gallery-item').offsetHeight;
+  window.scrollBy({ 
+    top: 2 * cardHeight, 
+    behavior: 'smooth' 
+  });  
 };
 
 form.addEventListener('submit', createGallery);
