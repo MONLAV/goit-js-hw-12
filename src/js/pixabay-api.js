@@ -4,6 +4,9 @@ let currentPage = 1;
 
 export const searchImage = async (search, page = currentPage, perPage = 40) => {
   const url = `https://pixabay.com/api/`;
+  const loader = document.getElementById('loader');
+
+  loader.style.display = 'block';
 
   try {
     const response = await axios.get(url, {
@@ -18,8 +21,10 @@ export const searchImage = async (search, page = currentPage, perPage = 40) => {
       },
     });
 
+    loader.style.display = 'none';
     return response.data;
   } catch (error) {
+    loader.style.display = 'none';
     console.error('Error fetching images:', error);
     throw error;
   }

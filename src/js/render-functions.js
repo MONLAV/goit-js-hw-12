@@ -26,10 +26,11 @@ const renderImageInfo = (title, count) => `
 `;
 
 function checkLastPage(totalPages, currentPage) {
+  const loadMoreButton = document.getElementById('loadMoreButton');
   if (currentPage >= totalPages) {
-    document.getElementById('loadMoreButton').style.display = 'none';
+    loadMoreButton.style.display = 'none';
   } else {
-    document.getElementById('loadMoreButton').style.display = 'block';
+    loadMoreButton.style.display = 'block';
   }
 }
 
