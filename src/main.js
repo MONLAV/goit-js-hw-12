@@ -88,17 +88,19 @@ const fetchAndRenderImages = searchText => {
 const loadMoreImages = () => {
   loader.style.display = 'block';
   loadMoreBtn.style.display = 'none';
-  fetchAndRenderImages(currentSearchText);
 
-  const card = document.querySelector('.gallery-item');
-  if (card) {
-    const cardHeight = card.offsetHeight;
-    window.scrollBy({
-      top: 2 * cardHeight,
-      behavior: 'smooth'
-    });
-  }
-}
+  fetchAndRenderImages(currentSearchText).then(() => {
+    loader.style.display = 'none';
+    
+   const galleryItems = document.querySelector('.gallery-item');
+    if (galleryItems.length > 0) {
+      const lastItem = galleryItems[galleryItems.length - 40]; 
+      if (lastItem) {
+        lastItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+};
 
 const checkLastPage = (totalPages) => {
   if (currentPage >= totalPages) {
