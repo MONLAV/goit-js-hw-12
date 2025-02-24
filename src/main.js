@@ -93,12 +93,9 @@ const loadMoreImages = () => {
     loader.style.display = 'none';
     loadMoreBtn.style.display = 'block';
 
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    if (galleryItems.length > 40) {
-      const lastLoadedItem = galleryItems[galleryItems.length - 40]; // Беремо перший новий елемент
-      if (lastLoadedItem) {
-        lastLoadedItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+    const firstNewItem = document.querySelector('.gallery-item:last-of-type'); // Беремо останню додану картку
+    if (firstNewItem) {
+      firstNewItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
 };
