@@ -48,7 +48,7 @@ const createGallery = e => {
 
 const fetchAndRenderImages = searchText => {
   searchImage(searchText)
-    .then(({ hits }) => {
+    .then(({ hits, totalHits  }) => {
       if (hits.length === 0) {
         iziToast.error({
           iconUrl: errorIcon,
@@ -64,7 +64,8 @@ const fetchAndRenderImages = searchText => {
       const images = renderImages(hits);
       gallery.innerHTML += images;
       loader.style.display = 'none';
-      loadMoreBtn.style.display = 'block';
+      const totalPages = Math.ceil(totalHits / 40);
+      checkLastPage(totalPages);
       lightbox.refresh();
       form.reset();
       nextPage();
@@ -92,6 +93,14 @@ const loadMoreImages = () => {
     top: 2 * cardHeight, 
     behavior: 'smooth' 
   });  
+};
+
+const checkLastPage = (totalPages) => {
+  if (currentPage >= totalPages) {
+    loadMoreBtn.style.display = 'none';
+  } else {
+    loadMoreBtn.style.display = 'block';
+  }
 };
 
 form.addEventListener('submit', createGallery);
