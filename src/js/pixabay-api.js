@@ -2,7 +2,8 @@ import axios from 'axios';
 
 let currentPage = 1;
 
-export const searchImage = async (search, page = currentPage, perPage = 40) => {
+export const searchImage = async (search, perPage = 40) => {
+  const page = currentPage;
   const url = `https://pixabay.com/api/`;
   const loader = document.getElementById('loader');
 

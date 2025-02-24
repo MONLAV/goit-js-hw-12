@@ -22,6 +22,8 @@ iziToast.settings({
 });
 
 let currentSearchText = '';
+let currentPage = 1;
+let totalPages = 0;
 
 const createGallery = e => {
   e.preventDefault();
@@ -64,7 +66,7 @@ const fetchAndRenderImages = searchText => {
       const images = renderImages(hits);
       gallery.innerHTML += images;
       loader.style.display = 'none';
-      const totalPages = Math.ceil(totalHits / 40);
+      totalPages = Math.ceil(totalHits / 40);
       checkLastPage(totalPages);
       lightbox.refresh();
       form.reset();
@@ -88,12 +90,15 @@ const loadMoreImages = () => {
   loadMoreBtn.style.display = 'none';
   fetchAndRenderImages(currentSearchText);
 
- const cardHeight = document.querySelector('.gallery-item').offsetHeight;
-  window.scrollBy({ 
-    top: 2 * cardHeight, 
-    behavior: 'smooth' 
-  });  
-};
+  const card = document.querySelector('.gallery-item');
+  if (card) {
+    const cardHeight = card.offsetHeight;
+    window.scrollBy({
+      top: 2 * cardHeight,
+      behavior: 'smooth'
+    });
+  }
+}
 
 const checkLastPage = (totalPages) => {
   if (currentPage >= totalPages) {

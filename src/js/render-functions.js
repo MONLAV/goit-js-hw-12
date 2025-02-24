@@ -25,40 +25,12 @@ const renderImageInfo = (title, count) => `
   </li>
 `;
 
-function checkLastPage(totalPages, currentPage) {
-  const loadMoreButton = document.getElementById('loadMoreButton');
-  if (currentPage >= totalPages) {
-    loadMoreButton.style.display = 'none';
-  } else {
-    loadMoreButton.style.display = 'block';
-  }
-}
-
 function scrollSmoothly() {
   const cardHeight = document.querySelector('.card').offsetHeight;
   window.scrollBy({ 
     top: 2 * cardHeight, 
     behavior: 'smooth' 
   });
-}
-
-async function loadMore() {
-  const loadMoreButton = document.getElementById('loadMoreButton');
-  const loader = document.getElementById('loader');
-
-  loadMoreButton.style.display = 'none';
-  loader.style.display = 'block';
-
-  try {
-    const data = await fetchData('your-api-endpoint');
-    renderNewData(data);
-    scrollSmoothly();
-    checkLastPage(totalPages, currentPage);
-  } catch (error) {
-    console.error('Error loading data:', error);
-  } finally {
-    loader.style.display = 'none';
-  }
 }
 
 const fetchData = async url => {
