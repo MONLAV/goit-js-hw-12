@@ -93,9 +93,18 @@ const loadMoreImages = () => {
     loader.style.display = 'none';
     loadMoreBtn.style.display = 'block';
 
-    const firstNewItem = document.querySelector('.gallery-item:last-of-type'); // Беремо останню додану картку
-    if (firstNewItem) {
-      firstNewItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    if (galleryItems.length > 0) {
+      const newItems = [...galleryItems].slice(-40); 
+      const lastItem = newItems[0]; 
+
+      if (lastItem) {
+        const { height } = lastItem.getBoundingClientRect();
+        window.scrollBy({
+          top: height * 4, 
+          behavior: 'smooth',
+        });
+      }
     }
   });
 };
