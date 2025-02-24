@@ -25,6 +25,14 @@ const renderImageInfo = (title, count) => `
   </li>
 `;
 
+function checkLastPage(totalPages, currentPage) {
+  if (currentPage >= totalPages) {
+    document.getElementById('loadMoreButton').style.display = 'none';
+  } else {
+    document.getElementById('loadMoreButton').style.display = 'block';
+  }
+}
+
 function scrollSmoothly() {
   const cardHeight = document.querySelector('.card').offsetHeight;
   window.scrollBy({ 
