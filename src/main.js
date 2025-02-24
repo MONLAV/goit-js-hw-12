@@ -92,12 +92,13 @@ const loadMoreImages = () => {
   fetchAndRenderImages(currentSearchText).then(() => {
     loader.style.display = 'none';
     
-   const galleryItems = document.querySelector('.gallery-item');
-    if (galleryItems.length > 0) {
-      const lastItem = galleryItems[galleryItems.length - 40]; 
-      if (lastItem) {
-        lastItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+    const card = document.querySelector('.gallery-item');
+    if (card) {
+      const cardHeight = card.getBoundingClientRect().height;
+      window.scrollBy({
+        top: 2 * cardHeight * 4,
+        behavior: 'smooth',
+      });  
     }
   });
 };
