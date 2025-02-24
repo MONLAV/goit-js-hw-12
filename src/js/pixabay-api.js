@@ -30,7 +30,10 @@ export const searchImage = async (search, perPage = 40) => {
     throw error;
   }
 };
-let currentPage = 1;
+
+export const resetPage = () => {
+  currentPage = 1; 
+};
 
 export const nextPage = () => {
   currentPage += 1;
