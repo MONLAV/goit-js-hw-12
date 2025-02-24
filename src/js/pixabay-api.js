@@ -18,7 +18,7 @@ export const searchImage = async (search, perPage = 40) => {
         orientation: 'horizontal',
         safesearch: true,
         per_page: perPage,
-        page: page,
+        page: currentPage,
       },
     });
 
