@@ -91,14 +91,14 @@ const loadMoreImages = () => {
 
   fetchAndRenderImages(currentSearchText).then(() => {
     loader.style.display = 'none';
-    
-    const card = document.querySelector('.gallery-item');
-    if (card) {
-      const cardHeight = card.getBoundingClientRect().height;
-      window.scrollBy({
-        top: 2 * cardHeight * 4,
-        behavior: 'smooth',
-      });  
+    loadMoreBtn.style.display = 'block';
+
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    if (galleryItems.length > 40) {
+      const lastLoadedItem = galleryItems[galleryItems.length - 40]; // Беремо перший новий елемент
+      if (lastLoadedItem) {
+        lastLoadedItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   });
 };
