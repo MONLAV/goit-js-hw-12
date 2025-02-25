@@ -100,8 +100,7 @@ ul {
 }
 
 .load-more {
-  display: flex;
-  justify-content: center;
+  display: block;
   margin: 20px auto;
   padding: 10px 20px;
   background-color: #007bff;
@@ -109,6 +108,12 @@ ul {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  text-align: center;
+}
+
+.load-mor:disabled {
+  background-color: grey;
+  cursor: not-allowed;
 }
 
 .load-more:hover {

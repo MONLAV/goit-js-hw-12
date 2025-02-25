@@ -54,32 +54,25 @@ const fetchAndRenderImages = searchText => {
       if (hits.length === 0) {
         iziToast.error({
           iconUrl: errorIcon,
-          iconColor: '#fff',
-          imageWidth: 24,
-          messageColor: '#fff',
-          message: 'Sorry, there are no images matching your search query. Please try again!',
+          message: 'No images found!',
         });
         loader.style.display = 'none';
         return;
       }
 
-      const images = renderImages(hits);
-      gallery.innerHTML += images;
+      gallery.innerHTML += renderImages(hits);
       loader.style.display = 'none';
       totalPages = Math.ceil(totalHits / 40);
-      checkLastPage(totalPages);
+      checkLastPage();
       lightbox.refresh();
-      form.reset();
-      nextPage();
+      
+      currentPage++;
     })
     .catch(error => {
       console.error('Error fetching images:', error);
       iziToast.error({
         iconUrl: errorIcon,
-        iconColor: '#fff',
-        imageWidth: 24,
-        messageColor: '#fff',
-        message: 'Error fetching images. Please try again later.',
+        message: 'Error loading images. Please try again later!',
       });
       loader.style.display = 'none';
     });
@@ -94,9 +87,10 @@ const loadMoreImages = () => {
     loadMoreBtn.style.display = 'block';
 
     const galleryItems = document.querySelectorAll('.gallery-item');
+  
     if (galleryItems.length > 0) {
-      const lastItem = galleryItems[galleryItems.length - 40];
-      if (lastItem) {
+      const lastLoadedItem = galleryItems[galleryItems.length - 40];
+      if (lastLoadedItem) {
         lastItem.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }
     }
