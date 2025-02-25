@@ -34,10 +34,6 @@ const createGallery = e => {
 
   if (!currentSearchText) {
     iziToast.error({
-      iconUrl: errorIcon,
-      iconColor: '#fff',
-      imageWidth: 24,
-      messageColor: '#fff',
       message: 'Please write a query for search',
     });
     loader.style.display = 'none';
@@ -45,15 +41,20 @@ const createGallery = e => {
   }
 
   resetPage();
-  fetchAndRenderImages(currentSearchText);
+  fetchAndRenderImages(currentSearchText).the(() => {
+    checkLastPage();
+  });
 };
 
+
+
 const fetchAndRenderImages = searchText => {
+  loader.style.display = 'block';
+
   searchImage(searchText)
     .then(({ hits, totalHits  }) => {
       if (hits.length === 0) {
         iziToast.error({
-          iconUrl: errorIcon,
           message: 'No images found!',
         });
         loader.style.display = 'none';
@@ -62,16 +63,16 @@ const fetchAndRenderImages = searchText => {
 
       gallery.innerHTML += renderImages(hits);
       loader.style.display = 'none';
+
       totalPages = Math.ceil(totalHits / 40);
       checkLastPage();
-      lightbox.refresh();
       
+      lightbox.refresh();   
       currentPage++;
     })
     .catch(error => {
       console.error('Error fetching images:', error);
       iziToast.error({
-        iconUrl: errorIcon,
         message: 'Error loading images. Please try again later!',
       });
       loader.style.display = 'none';
@@ -85,15 +86,6 @@ const loadMoreImages = () => {
   fetchAndRenderImages(currentSearchText).then(() => {
     loader.style.display = 'none';
     loadMoreBtn.style.display = 'block';
-
-    const galleryItems = document.querySelectorAll('.gallery-item');
-  
-    if (galleryItems.length > 0) {
-      const lastLoadedItem = galleryItems[galleryItems.length - 40];
-      if (lastLoadedItem) {
-        lastItem.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }
-    }
   });
 };
 
