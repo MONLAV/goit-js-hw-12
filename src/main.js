@@ -95,21 +95,16 @@ const loadMoreImages = () => {
 
     const galleryItems = document.querySelectorAll('.gallery-item');
     if (galleryItems.length > 0) {
-      const newItems = [...galleryItems].slice(-40); 
-      const lastItem = newItems[0]; 
-
+      const lastItem = galleryItems[galleryItems.length - 40];
       if (lastItem) {
-        const { height } = lastItem.getBoundingClientRect();
-        window.scrollBy({
-          top: height * 4, 
-          behavior: 'smooth',
-        });
+        lastItem.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }
     }
   });
 };
 
-const checkLastPage = (totalPages) => {
+
+const checkLastPage = () => {
   if (currentPage >= totalPages) {
     loadMoreBtn.style.display = 'none';
   } else {

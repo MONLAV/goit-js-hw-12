@@ -36,5 +36,7 @@ export const resetPage = () => {
 };
 
 export const nextPage = () => {
-  currentPage += 1;
+  return ++currentPage;
 };
+
+currentPage = nextPage();
