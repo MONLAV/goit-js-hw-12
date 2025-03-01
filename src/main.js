@@ -1,102 +1,108 @@
+import { createGalleryCardTemplate, initializeLightbox } from './js/render-functions';
+import { getAxiosPhotos } from './js/pixabay-api';
 import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.min.css';
-import 'simplelightbox/dist/simple-lightbox.min.css';
-import SimpleLightbox from 'simplelightbox';
-import { searchImage, resetPage, nextPage } from './js/pixabay-api';
-import { renderImages } from './js/render-functions';
-import errorIcon from './img/error.png';
 
-const form = document.querySelector('.form');
-const gallery = document.querySelector('ul.gallery');
-const loader = document.querySelector('.loader');
-const loadMoreBtn = document.querySelector('.load-more');
+/* ===================== DOM Elements ===================== */
+const formEl = document.querySelector('.js-page-form');
+const galleryEl = document.querySelector('.js-gallery');
+const loaderEl = document.querySelector('.js-loader');
+const loadMoreBtnEl = document.querySelector('.load-more-btn-js');
 
-let lightbox = new SimpleLightbox('.gallery a', {
-  captionsData: 'alt',
-  captionDelay: 250,
-});
+/* ===================== Global Params ===================== */
+const params = {
+  searchedValue: '',
+  page: 1,
+  total: 0,
+  perPage: 18,
+};
 
-iziToast.settings({
-  timeout: 4000,
-  position: 'topRight',
-});
+/* ===================== Event Handlers ===================== */
+const onFormElSubmit = async event => {
+  event.preventDefault();
+  params.searchedValue = formEl.elements.user_query.value.trim();
 
-let currentSearchText = '';
-let currentPage = 1;
-let totalPages = 0;
-
-const createGallery = e => {
-  e.preventDefault();
-  gallery.innerHTML = '';
-  loader.style.display = 'block';
-  loadMoreBtn.style.display = 'none';
-  currentSearchText = e.target.elements.search.value.trim();
-
-  if (!currentSearchText) {
-    iziToast.error({
-      message: 'Please write a query for search',
-    });
-    loader.style.display = 'none';
+  if (!params.searchedValue) {
+    showErrorMessage('Please enter a valid search query!');
+    clearGallery();
     return;
   }
 
-  resetPage();
-  fetchAndRenderImages(currentSearchText).the(() => {
-    checkLastPage();
-  });
-};
+  params.page = 1;
+  showLoader();
 
+  try {
+    const data = await getAxiosPhotos(params.searchedValue, params.page, params.perPage);
 
+    if (!data.hits || data.hits.length === 0) {
+      showErrorMessage('Sorry, there are no images matching your search query. Please try again!');
+      clearGallery();
+      return;
+    }
 
-const fetchAndRenderImages = searchText => {
-  loader.style.display = 'block';
-
-  searchImage(searchText)
-    .then(({ hits, totalHits  }) => {
-      if (hits.length === 0) {
-        iziToast.error({
-          message: 'No images found!',
-        });
-        loader.style.display = 'none';
-        return;
-      }
-
-      gallery.innerHTML += renderImages(hits);
-      loader.style.display = 'none';
-
-      totalPages = Math.ceil(totalHits / 40);
-      checkLastPage();
-      
-      lightbox.refresh();   
-      currentPage++;
-    })
-    .catch(error => {
-      console.error('Error fetching images:', error);
-      iziToast.error({
-        message: 'Error loading images. Please try again later!',
-      });
-      loader.style.display = 'none';
-    });
-};
-
-const loadMoreImages = () => {
-  loader.style.display = 'block';
-  loadMoreBtn.style.display = 'none';
-
-  fetchAndRenderImages(currentSearchText).then(() => {
-    loader.style.display = 'none';
-    loadMoreBtn.style.display = 'block';
-  });
-};
-
-
-const checkLastPage = () => {
-  if (currentPage >= totalPages) {
-    loadMoreBtn.style.display = 'none';
-  } else {
-    loadMoreBtn.style.display = 'block';
+    params.total = data.totalHits;
+    updateGallery(data.hits);
+    checkBtnStatus();
+  } catch (error) {
+    showErrorMessage('Something went wrong. Please try again!');
+  } finally {
+    hideLoader();
   }
 };
 
-form.addEventListener('submit', createGallery);
-loadMoreBtn.addEventListener('click', loadMoreImages);
+const onloadMoreBtnElClick = async () => {
+  hideloadBtn();
+  showLoader();
+
+  params.page += 1;
+  try {
+    const data = await getAxiosPhotos(params.searchedValue, params.page, params.perPage);
+    updateGallery(data.hits, true);
+    checkBtnStatus();
+    scrollPage();
+  } catch (error) {
+    showErrorMessage('Something went wrong. Please try again!');
+  } finally {
+    hideLoader();
+  }
+};
+
+/* ===================== Helper Functions ===================== */
+const showLoader = () => loaderEl.classList.remove('is-hidden');
+const hideLoader = () => loaderEl.classList.add('is-hidden');
+const showloadBtn = () => loadMoreBtnEl.classList.remove('is-hidden');
+const hideloadBtn = () => loadMoreBtnEl.classList.add('is-hidden');
+
+const showErrorMessage = message => {
+  iziToast.error({ message, position: 'topRight' });
+};
+
+const clearGallery = () => {
+  galleryEl.innerHTML = '';
+  formEl.reset();
+  hideloadBtn();
+};
+
+const updateGallery = (images, append = false) => {
+  const galleryCardsTemplate = images.map(imgDetails => createGalleryCardTemplate(imgDetails)).join('');
+  if (append) {
+    galleryEl.insertAdjacentHTML('beforeend', galleryCardsTemplate);
+  } else {
+    galleryEl.innerHTML = galleryCardsTemplate;
+  }
+  initializeLightbox();
+};
+
+const checkBtnStatus = () => {
+  const maxPage = Math.min(Math.ceil(params.total / params.perPage), Math.ceil(500 / params.perPage));
+  params.page >= maxPage ? hideloadBtn() : showloadBtn();
+};
+
+const scrollPage = () => {
+  if (!galleryEl.firstElementChild) return;
+  const info = galleryEl.firstElementChild.getBoundingClientRect();
+  scrollBy({ behavior: 'smooth', top: info.height * 2 });
+};
+
+/* ===================== Event Listeners ===================== */
+formEl.addEventListener('submit', onFormElSubmit);
+loadMoreBtnEl.addEventListener('click', onloadMoreBtnElClick);

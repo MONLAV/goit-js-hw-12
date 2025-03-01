@@ -1,42 +1,24 @@
 import axios from 'axios';
 
-let currentPage = 1;
+const BASE_URL = 'https://pixabay.com/api/?';
+const API_KEY = '47161865-40d939b38272e547a09e56cd8';
 
-export const searchImage = async (search, perPage = 40) => {
-  const page = currentPage;
-  const url = `https://pixabay.com/api/`;
-  const loader = document.getElementById('loader');
-
-  loader.style.display = 'block';
-
+export const getAxiosPhotos = async (searchedQuery, page, perPage) => {
   try {
-    const response = await axios.get(url, {
-      params: {
-        key: '47161865-40d939b38272e547a09e56cd8',
-        q: search,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: true,
-        per_page: perPage,
-        page: currentPage,
-      },
+    const urlParams = new URLSearchParams({
+      key: API_KEY,
+      q: searchedQuery,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: 'true',
+      per_page: perPage,
+      page: page,
     });
 
-    loader.style.display = 'none';
+    const response = await axios.get(`${BASE_URL}${urlParams}`);
     return response.data;
   } catch (error) {
-    loader.style.display = 'none';
-    console.error('Error fetching images:', error);
-    throw error;
+    console.error('Error fetching data from Pixabay:', error);
+    return { hits: [], totalHits: 0 };
   }
 };
-
-export const resetPage = () => {
-  currentPage = 1; 
-};
-
-export const nextPage = () => {
-  return ++currentPage;
-};
-
-currentPage = nextPage();
